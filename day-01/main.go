@@ -47,7 +47,7 @@ func applyRotation(currentValue int, rotation string) (results applyRotationResu
 
 	var newValue, zeroCount int
 	newValue = currentValue
-	zeroCount += int(math.Abs(float64(rotationValue))) / modulus
+	zeroCount += getAbsInt(rotationValue) / modulus
 	rotationValue = rotationValue % modulus
 	newValue += rotationValue
 	if currentValue != 0 && (newValue >= 100 || newValue <= 0) {
@@ -59,6 +59,10 @@ func applyRotation(currentValue int, rotation string) (results applyRotationResu
 		newValue:  newValue,
 		zeroCount: zeroCount,
 	}, nil
+}
+
+func getAbsInt(n int) int {
+	return int(math.Abs(float64(n)))
 }
 
 func getInput() ([]string, error) {
