@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -21,28 +22,43 @@ func main() {
 	currentValue := 50
 	counter := 0
 	for _, rotation := range input {
-		currentValue, err = applyRotation(currentValue, rotation)
+		results, err := applyRotation(currentValue, rotation)
 		if err != nil {
 			panic(err)
 		}
 
-		if currentValue == 0 {
-			counter++
-		}
+		currentValue = results.newValue
+		counter += results.zeroCount
 	}
 
 	fmt.Printf("times the value has reached 0: %d\n", counter)
 }
 
-func applyRotation(currentValue int, rotation string) (newValue int, err error) {
+type applyRotationResults struct {
+	newValue  int
+	zeroCount int
+}
+
+func applyRotation(currentValue int, rotation string) (results applyRotationResults, err error) {
 	rotationValue, err := parseRotationValue(rotation)
 	if err != nil {
-		return 0, err
+		return results, err
 	}
 
-	newValue = currentValue + rotationValue
+	var newValue, zeroCount int
+	newValue = currentValue
+	zeroCount += int(math.Abs(float64(rotationValue))) / modulus
+	rotationValue = rotationValue % modulus
+	newValue += rotationValue
+	if currentValue != 0 && (newValue >= 100 || newValue <= 0) {
+		zeroCount++
+	}
 	newValue = (newValue + modulus) % modulus
-	return newValue, nil
+
+	return applyRotationResults{
+		newValue:  newValue,
+		zeroCount: zeroCount,
+	}, nil
 }
 
 func getInput() ([]string, error) {
