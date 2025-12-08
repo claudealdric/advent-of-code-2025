@@ -64,3 +64,12 @@ func TestGetLargestJoltage2(t *testing.T) {
 		}
 	})
 }
+
+func BenchmarkLargestJoltage2(b *testing.B) {
+	for b.Loop() {
+		getLargestJoltage2(
+			"5435113354324445355543423523324245133533362334234141663246333323544553332443432533433423343343453463",
+			12,
+		)
+	}
+}
